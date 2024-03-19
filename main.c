@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <math.h>
 #include <float.h>
+#include <stdlib.h>
 
 typedef struct data{
 	int f;
@@ -179,8 +180,6 @@ resp r[]={{10, 6.84},
 {178, 16.96},
 {180, 16.95},};
 
-resp a[10];
-resp b[10];
 
 
 float encontrarValorCercano(float numero, resp array[], int longitud) {
@@ -197,26 +196,31 @@ float encontrarValorCercano(float numero, resp array[], int longitud) {
     return valorCercano;
 }
 
-int main(int argc, char const *argv[]){
 
-	float target=18.28;
-	float tol=2;
-	int fs=72;
+int* get_lateral_frequency(float target,int fs,resp data[]){
+	
+	resp a[10];
+	resp b[10];
 	int k=0;
 	int z=0;
-	int out[2];
+	float tol=1;
+	int* out = calloc(3,sizeof(int));
 
-	for (int i = 0; i < 81; ++i){
-		if (fabs(r[i].mag-target)<tol){
-			if (fs>r[i].f){
-				a[k].f=r[i].f;
-				a[k].mag=r[i].mag;
+	for (int i = 0; i < 86; ++i){
+		if (fabs(data[i].mag-target)<tol){
+			if (fs>data[i].f){
+				a[k].f=data[i].f;
+				a[k].mag=data[i].mag;
+
+				printf("Menores: %0.2d\n",a[k].f);
 				k++;
 			}else{
-				b[z].f=r[i].f;
-				b[z].mag=r[i].mag;
+				b[z].f=data[i].f;
+				b[z].mag=data[i].mag;
+				printf("Mayores: %0.2d\n",b[z].f);
 				z++;
 			}
+
 		}	
 	}
 
@@ -228,5 +232,21 @@ int main(int argc, char const *argv[]){
 	printf("Validacion\n");
 	float val=sqrt(((float)out[0]*(float)out[1]));
 	printf("%f\n",val-fs);
+
+	return out; 
+}
+
+
+
+
+int main(int argc, char const *argv[]){
+
+	float target=18.28;
+	int fs=72;
+
+	get_lateral_frequency(target,fs,r);
+	
+
+
 	return 0;
 }
